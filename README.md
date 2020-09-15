@@ -1,9 +1,11 @@
 # fish-vue
 
 ## 项目简介
-> VUE前后端分离入门学习，当前项目适用于移动端H5
+> VUE前后端分离入门学习，当前项目适用于移动端H5  
 > 当前项目使用[@vue/cli（vue-cli 3）](https://cli.vuejs.org/zh/guide/)创建
 
+## DEMO效果图
+> ![DEMO效果](https://github.com/kevin4j/fish-vue/blob/master/fish-vue-demo.gif)
 
 ## 主要功能
 > * 使用Axios进行ajax请求发送 
