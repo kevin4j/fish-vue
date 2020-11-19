@@ -70,7 +70,7 @@ const loadPageData = (fetchName, params, callback, pageParams, options) => {
   params.pageSize = pageParams.pageSize;
   fetchData(fetchName, params, options).then((res) => {
     if (res && res.data && res.pageLimit) {
-      pageParams.hasNextPage = (res.pageLimit.pageNum < res.pageLimit.total);
+      pageParams.hasNextPage = (res.pageLimit.pageNum*res.pageLimit.pageSize < res.pageLimit.total);
       pageParams.pageNum = res.pageLimit.pageNum + 1;
       pageParams.pageSize = res.pageLimit.pageSize;
 

@@ -19,7 +19,7 @@ function renderResult (data, pageLimit) {
   return {code: 200, data: data, pageLimit: pageLimit || null}
 }
 function renderPageLimit (pageNum, pageSize, total) {
-  return {pageNum: pageNum, pageSize: pageSize, total: total || pageSize * 10}
+  return {pageNum: pageNum, pageSize: pageSize, total: total || pageSize * 5}
 }
 
 Mock.mock('/api/author', 'get', renderResult({'id': '1', 'name': 'kevin'}))

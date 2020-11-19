@@ -46,7 +46,7 @@
     },
     methods: {
       init () {
-        return scrollLoad(getBannerList, {pageNum: 1, pageSize: 2}, (data) => {
+        return scrollLoad(getBannerList, {pageNum: 1, pageSize: 5}, (data) => {
           this.count += 1;
           data.forEach((d) => {
             d.imgUrl = getDownloadUrl(d.imgUrl)
