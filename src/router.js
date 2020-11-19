@@ -26,14 +26,6 @@ const routers = [
         }
     },
     {
-        path: '/index',
-        name: 'Index',
-        component: Index,
-        meta: {
-            title: '主页'
-        }
-    },
-    {
         path: '/second/:title',
         name: 'Second',
         component: Second,

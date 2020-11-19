@@ -3,7 +3,6 @@
     <div>{{title}}</div>
 
     <div>{{ '加载次数：'+ incrCount }}</div>
-
     <div v-for="banner in data" v-bind:key="banner.id">
       <router-link :to="{path: '/third', query: banner}">
         <div>{{banner.info}}</div>
@@ -11,6 +10,10 @@
           <img v-bind:src="banner.imgId"/>
         </div>
       </router-link>
+    </div>
+    <div class="noData_box" v-if="data==null || data.length==0">
+      <img class="noData_img" src="@/assets/images/nodata.png" alt="">
+      <p class="noData_t">暂无数据信息</p>
     </div>
   </div>
 </template>
