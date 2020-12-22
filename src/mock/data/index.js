@@ -58,3 +58,9 @@ Mock.mock(/\/api\/banner?/, 'get', function (options) {
   }
   return renderResult(data, renderPageLimit(pageNum, pageSize))
 })
+
+Mock.mock(/\/api\/uploadFile.do?/, 'post', function(options){
+  let data = [];
+  data.push(Random.image('350x300', Random.color(),'#FFF', Random.word(4)))
+  return renderResult({"fileIdList" : data});
+})

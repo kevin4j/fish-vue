@@ -5,6 +5,7 @@ import Test from './components/Test'
 import Index from './page/Index'
 import Second from './page/Second'
 import Third from './page/Third'
+import UploadImage from './page/UploadImage'
 
 Vue.use(Router)
 
@@ -39,6 +40,14 @@ const routers = [
         path: '/third',
         name: 'Third',
         component: Third,
+        meta: {
+            title: '第三层'
+        }
+    },
+    {
+        path: '/uploadImage',
+        name: 'UploadImage',
+        component: UploadImage,
         meta: {
             title: '第三层'
         }

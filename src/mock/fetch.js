@@ -1,47 +1,43 @@
+import {showToast} from '../utils/commonTool'
+import router from "@/router";
 
-const fetchData = async (fetchName, params, options) => {
+const fetchData = async (fetchName, params, options, successCallback, failCallback) => {
   try {
     const defaultPrams = {};
     params = Object.assign(defaultPrams, params || {});
     const resultData = await fetchName(params, options);
     // console.log(resultData)
-    if (resultData) {
-      if (resultData.data) {
-        // 获取到正常数据并返回
-        if (resultData.data.code.toString() === '200' || resultData.data.code.toString() === '304') {
-          return {
-            code: 'success',
-            data: resultData.data.data,
-            pageLimit: resultData.data.pageLimit,
-            text: resultData.data.text
-          };
-        } else {
-          // 状态码异常
-          return {
-            code: 'no_data',
-            text: resultData.data.text
-          }
+    if (resultData && resultData.data) {
+      const result = resultData.data;
+
+      if (result.code.toString() === '200' || result.code.toString() === '304') { // 获取到正常数据，回调成功方法
+        try{
+          successCallback.call(this, result.data, result.pageLimit);
+          return {code: "200", text: "success"};
+        }catch(e){
+          console.error("处理成功回调函数失败："+e);
+          showToast("处理失败");
         }
-      } else {
-        // 接口返回异常
-        return {
-          code: 'error',
-          text: resultData.data.text
+      } else if(result.code == '401'){ //登录失效，跳转到登录页
+        // showToast(resultData.data.text);
+        setTimeout(() => {
+          router.push('/login')
+        },2000)
+      } else { // 返回异常，回调失败方法/提示异常
+        if(failCallback){
+          failCallback.call(this, result);
+        }else{
+          showToast(result.text);
         }
       }
     } else {
-      return {
-        code: 'error',
-        text: 'no response'
-      }
+      showToast("no response");
     }
   } catch (e) {
-    // 请求失败
-    console.log(e)
-    return {
-      code: 'fail'
-    };
+    console.error(e);
+    showToast("请求失败");
   }
+  return {code: "400", text: "fail"};
 };
 
 export {

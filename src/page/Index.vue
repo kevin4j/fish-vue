@@ -8,14 +8,19 @@
       <p>IMG_BASE_URL:</p>
       <p>{{IMG_BASE_URL}}</p>
     </div>
-    <ul class="clearfix category_list">
-      <li v-for="msg in list" v-bind:key="msg.id">
-        <router-link :to="{name: 'Second', params:{ title: msg.name}}">
-          <p class="find_goods_img" v-bind:style="{ lineHeight:imgHeight }"><img v-bind:src="msg.coverImgUrl" alt="" v-bind:style="{ height:imgHeight }"/></p>
-          <p class="title">{{ msg.name}}</p>
-        </router-link>
-      </li>
-    </ul>
+    <div class="category_div">
+      <ul class="category_list">
+        <li v-for="msg in list" v-bind:key="msg.id">
+          <router-link :to="{name: 'Second', params:{ title: msg.name}}">
+            <p class="find_goods_img" v-bind:style="{ lineHeight:imgHeight }"><img v-bind:src="msg.coverImgUrl" alt="" v-bind:style="{ height:imgHeight }"/></p>
+            <p class="title">{{ msg.name}}</p>
+          </router-link>
+        </li>
+      </ul>
+    </div>
+    <div class="btn_div">
+      <OnlineService></OnlineService>
+    </div>
   </div>
 </template>
 
@@ -42,8 +47,9 @@
       },
       methods:{
         initCategory(){
-          fetchData(getCategoryList).then((res)=>{
-            this.list = res.data;
+          let that = this;
+          fetchData(getCategoryList, {}, {}, (res)=>{
+            that.list = res;
           })
         }
       }
@@ -51,18 +57,29 @@
 </script>
 
 <style scoped>
-.content div{
+.system_info p{
   line-height: 30px;
 }
 .system_info{
   text-align: left;
   padding: 10px;
 }
-.category_list{margin-top:10px;padding:0px 5px;background:#f4f4f4;}
-.category_list li{width:47%;margin-bottom:10px;float:left;padding-left:2%;}
+.category_div{margin-bottom: 65px;}
+.category_list{margin-top:10px;background:#f4f4f4;}
+.category_list li{width:48%;margin-bottom:10px;display: inline-block;padding:0 1%;}
 .category_list li a{border-radius:5px;background:#fff;display:block;padding-bottom:5px;}
 .category_list li .title{font-size:13px;color:#333;line-height:36px;padding:0 10px;height:36px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;margin-bottom:4px;}
 .category_list li .num{font-size:13px;color:#fc7945;line-height:20px;padding:0 10px;}
 .find_goods_img{margin-bottom:5px;background:#e6eaed;border-radius:5px 5px 0 0;overflow:hidden;}
 .find_goods_img img{width:100%;vertical-align:middle;object-fit:contain;}
+
+.btn_div {
+  padding: 10px 15px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  text-align: center;
+}
 </style>

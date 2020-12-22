@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
+<!--    <img src="./assets/logo.png">-->
 
     <!-- routeTransform是页面跳转过渡动画效果，此处 transition 会导致keep-alive缓存的页面返回后定位不准确-->
     <!--    <transition name="routeTransform">-->
@@ -15,6 +15,7 @@
 
 <script>
   import './assets/css/basic.css';
+  import 'mint-ui/lib/style.css';
   import Loading from './components/loading/LoadingOverlay';
   export default {
     name: 'App',

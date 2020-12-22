@@ -9,4 +9,10 @@ export const getCategoryList = getMock('/category', true);
 // 获取广告
 export const getBannerList = getMock('/banner', true);
 
+// 获取微信参数
+export const getWxPrams = getMock('/getWxPrams');
+
+// 上传微信图片
+export const uploadImg = getMock('/uploadImg');
+
 

@@ -15,6 +15,9 @@
 > * 支持meta页面主题变更
 > * 使用MockJs支持模拟api和数据
 > * ~~使用cross-env，支持多环境配置打包~~ 替换为vue-cli-service的mode模式
+> * 引入mint-ui, 使用Toast(提示框), MessageBox（确认框）, Popup（弹窗）, Pull Down（下拉）, Pull Up（上拉）
+> * 非微信浏览器支持vue-upload-component上传图片
+> * 微信浏览器支持微信图片上传接口
 
 
 ## 安装、启动或编译

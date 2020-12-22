@@ -3,7 +3,7 @@
     <div>{{title}}</div>
 
     <div>{{ '加载次数：'+ incrCount }}</div>
-    <div v-for="banner in data" v-bind:key="banner.id">
+    <div style="margin-bottom: 10px;" v-for="banner in data" v-bind:key="banner.id">
       <router-link :to="{path: '/third', query: banner}">
         <div>{{banner.info}}</div>
         <div>
@@ -21,7 +21,7 @@
 <script>
   import {getBannerList} from '../mock/api';
   import {scrollLoad} from '../utils/scrollLoad';
-  import {getDownloadUrl} from '../utils/commonTool';
+  import {getDownloadUrl, showToast} from '../utils/commonTool';
 
   export default {
     name: 'Second',
@@ -37,21 +37,23 @@
     },
     computed: {
       incrCount () {
-        return this.count + 1;
+        return this.count + '次';
       }
     },
     mounted () {
       console.log('msg:'+this.$route.params.title);
       this.init();
+      showToast("监听滚动条事件，自动加载分页数据")
     },
     methods: {
       init () {
-        return scrollLoad(getBannerList, {pageNum: 1, pageSize: 5}, (data) => {
-          this.count += 1;
+        let that=this;
+        return scrollLoad(getBannerList, {pageNum: 1, pageSize: 5}, {}, (data) => {
+          that.count += 1;
           data.forEach((d) => {
             d.imgUrl = getDownloadUrl(d.imgUrl)
           })
-          this.data = this.data.concat(data);
+          that.data = that.data.concat(data);
         })
       }
     },

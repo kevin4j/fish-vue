@@ -6,6 +6,21 @@
 import {fetchData} from '../mock/fetch'
 import {getWindowHeight, getScrollTop, getDocumentHeight} from "./window";
 
+const pageNumName="pageNum";
+const pageSizeName="pageSize";
+const currentPageName="pageNum";
+const pageLengthName="pageSize";
+const totalName="total";
+
+const getDefaultPagePrams = (params)=>{
+  return {
+    isScrollLoading: false,
+    [pageNumName]: params[pageNumName] || 1,
+    [pageSizeName]: params[pageSizeName] || 10,
+    hasNextPage: true
+  }
+}
+
 /**
  * 定义滑动滚动条加载实例， 初始化第一页数据和滚动条监听事件
  * @param fetchName 接口名
@@ -13,32 +28,28 @@ import {getWindowHeight, getScrollTop, getDocumentHeight} from "./window";
  * @param callback 加载数据后回调
  * @param options 可选项，如扩展url（expandUrl）、配置Axios请求可选项等
  */
-const scrollLoad = (fetchName, params, callback, options) => {
+const scrollLoad = (fetchName, params, options, callback) => {
   // 优先自定义分页
-  let pageParams = {
-    isScrollLoading: false,
-    pageNum: params.pageNum || 1,
-    pageSize: params.pageSize || 10,
-    hasNextPage: true
-  }
-  // 默认初始化加载第一页
-  loadPageData(fetchName, params, callback, pageParams, options);
-  // 监听滚动条事件加载分页诗句
+  let pageParams = getDefaultPagePrams(params);
+
+  // 监听滚动条事件加载分页事件
   window.addEventListener('scroll', function () {
-    scrollLoadData(loadPageData, fetchName, params, callback, pageParams, options);
+    scrollLoadData(fetchName, params, options, callback, pageParams);
   });
+
+  // 默认初始化加载第一页
+  return loadPageData(fetchName, params, options, callback, pageParams);
 }
 
 /**
  * 根据滚动条高度加载数据
- * @param loadFun
  * @param fetchName
  * @param params
  * @param callback
  * @param pageParams
  * @param options
  */
-const scrollLoadData = (loadFun, fetchName, params, callback, pageParams, options) => {
+const scrollLoadData = (fetchName, params, options, callback, pageParams) => {
   if (pageParams.hasNextPage && !pageParams.isScrollLoading) {
     if (!pageParams.isScrollLoading) {
       // 浏览器的高度加上滚动条的高度
@@ -51,11 +62,14 @@ const scrollLoadData = (loadFun, fetchName, params, callback, pageParams, option
       if (documentHeight <= totalHeight) {
         pageParams.isScrollLoading = true;
         options = Object.assign({ noLoading: true }, options || {});
-        loadFun(fetchName, params, callback, pageParams, options);
+
         // 限制300ms内滚动界面只加载一次数据
         setTimeout(function () {
           pageParams.isScrollLoading = false;
         }, 300);
+
+        console.log(JSON.stringify(pageParams))
+        return loadPageData(fetchName, params, options, callback, pageParams);
       }
     }
   }
@@ -64,21 +78,28 @@ const scrollLoadData = (loadFun, fetchName, params, callback, pageParams, option
 /**
  * 加载分页数据
  */
-const loadPageData = (fetchName, params, callback, pageParams, options) => {
-  params = params || {};
-  params.pageNum = pageParams.pageNum;
-  params.pageSize = pageParams.pageSize;
-  fetchData(fetchName, params, options).then((res) => {
-    if (res && res.data && res.pageLimit) {
-      pageParams.hasNextPage = (res.pageLimit.pageNum*res.pageLimit.pageSize < res.pageLimit.total);
-      pageParams.pageNum = res.pageLimit.pageNum + 1;
-      pageParams.pageSize = res.pageLimit.pageSize;
+const loadPageData = (fetchName, params, options, callback, pageParams) => {
+  if(!pageParams){
+    pageParams = getDefaultPagePrams(params);
+  }
 
-      callback && callback.call(this, res.data);
+  params = params || {};
+  params[pageNumName] = pageParams[pageNumName];
+  params[pageSizeName] = pageParams[pageSizeName];
+  return fetchData(fetchName, params, options,function(data, pageLimit){
+    if (pageLimit) {
+      pageParams.hasNextPage = ((pageLimit[currentPageName]*pageLimit[pageLengthName]) < pageLimit[totalName]);
+      pageParams[currentPageName] = pageLimit[currentPageName] + 1;
+      pageParams[pageLengthName] = pageLimit[pageLengthName];
+      pageParams[totalName] = pageLimit[totalName];
+
+      callback && callback.call(this, data, pageParams);
     }
-  })
+  });
 }
 
 export {
-  scrollLoad
+  getDefaultPagePrams,
+  scrollLoad,
+  loadPageData
 }

@@ -1,10 +1,9 @@
-import Axios from 'axios'
+import axios from 'axios'
+import {assignObj, getApiUrl, getToken} from '../utils/commonTool';
 import qs from 'qs';
-import {assignObj, getApiUrl} from '../utils/commonTool';
 
-const TIMEOUT = 14e3;
-
-Axios.defaults.withCredentials = true;
+axios.defaults.timeout=10000;
+axios.defaults.withCredentials = true;
 
 const getMock = (url, isMock) => {
   return (params, options) => requestMock(url, 'get', params, options, isMock);
@@ -12,11 +11,10 @@ const getMock = (url, isMock) => {
 
 const postMock = (url, isMock) => {
   return (params, options) => {
-    let newParams = qs.stringify(params);
     options = assignObj(options, 'headers', {
       'Content-Type': 'application/x-www-form-urlencoded'
     });
-    return requestMock(url, 'post', newParams, options, isMock);
+    return requestMock(url, 'post', params, options, isMock);
   }
 };
 
@@ -41,16 +39,21 @@ const requestMock = (url, method, params, options, isMock) => {
   }
 
   options = assignObj(options, 'headers', {
-    'Authorization': window.sessionStorage.getItem('token')
+    'Authorization': getToken()
   });
 
-  return Axios.request({
+  let requestConfig = {
     url,
     method,
-    params,
-    timeout: TIMEOUT,
-    ...options
-  })
+    ...options,
+  }
+
+  if((method == 'post' || method == 'put' || method == 'patch')){
+    requestConfig.data = qs.stringify(params);
+  }else{
+    requestConfig.params = params;
+  }
+  return axios.request(requestConfig)
 }
 
 export {
