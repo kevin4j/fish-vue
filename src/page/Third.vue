@@ -16,13 +16,15 @@
     </div>
     <p class="sublist_title">子列表(下拉刷新，上拉加载更多)</p>
     <div class="install_content page-loadmore-wrapper" ref="wrapper" :style="{ height: wrapperHeight + 'px' }">
-      <mt-loadmore :top-method="loadTop" :bottom-method="loadBottom" ref="loadmore" :bottom-all-loaded="allLoaded">
-        <ul class="category_list">
-          <li v-for="msg in list" v-bind:key="msg.id">
-              <p class="title">{{ msg.info}}</p>
-          </li>
-        </ul>
-      </mt-loadmore>
+      <van-pull-refresh v-model="loading" @refresh="onRefresh">
+        <van-list v-model:loading="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+          <ul class="category_list">
+            <li v-for="msg in list" v-bind:key="msg.id">
+                <p class="title">{{ msg.info}}</p>
+            </li>
+          </ul>
+        </van-list>
+      </van-pull-refresh>
     </div>
 
 
@@ -43,7 +45,8 @@
         user: {},
         detail: this.$route.query,
         list: [],
-        allLoaded: false,
+        loading: false,
+        finished: false,
         wrapperHeight: 0,
         pageParams: getDefaultPagePrams({pageNum: 1, pageSize: 10}),
       }
@@ -55,7 +58,7 @@
         console.log(that.$refs.wrapper.getBoundingClientRect().top)
         that.wrapperHeight = document.documentElement.clientHeight - that.$refs.wrapper.getBoundingClientRect().top - 10;
 
-        that.loadTop ()
+        that.onRefresh ()
       },200)
     },
     methods: {
@@ -66,31 +69,32 @@
           }
         })
       },
-      loadTop (){
+      onRefresh (){
         let that = this;
         that.list = [];
         that.pageParams=getDefaultPagePrams({pageNum: 1, pageSize: 10});
-        return that.loadBottom();
+        return that.onLoad();
       },
-      loadBottom (){
+      onLoad (){
         let that = this;
         loadPageData(getBannerList, {
 
-        },{}, function(res, pageLimit){
+        },{noLoading: true}, function(res, pageLimit){
           console.log(JSON.stringify(pageLimit))
           if(res){
             that.list.push(...res);
           }
           if(pageLimit){
-            that.allLoaded = !pageLimit.hasNextPage;
+            that.finished = !pageLimit.hasNextPage;
           }
-          that.$refs.loadmore.onTopLoaded();
-          that.$refs.loadmore.onBottomLoaded();
+          that.loading=false;
         }, that.pageParams)
       },
       goBack (){
         showConfirm("确认返回？", "", ()=>{
           window.history.back(-1);
+        }, ()=>{
+          console.log("cancel")
         })
       },
       gotoUploadImage (){

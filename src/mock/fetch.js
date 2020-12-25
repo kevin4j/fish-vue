@@ -3,8 +3,11 @@ import router from "@/router";
 
 const fetchData = async (fetchName, params, options, successCallback, failCallback) => {
   try {
-    const defaultPrams = {};
-    params = Object.assign(defaultPrams, params || {});
+    // 上传文件使用FormData，不能转化成Object
+    if(!(params instanceof FormData)){
+      const defaultPrams = {};
+      params = Object.assign(defaultPrams, params || {});
+    }
     const resultData = await fetchName(params, options);
     // console.log(resultData)
     if (resultData && resultData.data) {

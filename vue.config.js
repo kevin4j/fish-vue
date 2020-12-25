@@ -5,7 +5,8 @@ module.exports = {
     devServer: {
         host: '10.0.0.57',
         port: '8701',
-        disableHostCheck: true
+        disableHostCheck: true,
+        historyApiFallback: true
     },
     configureWebpack: { //打包版本号，防止本地缓存
         output: {

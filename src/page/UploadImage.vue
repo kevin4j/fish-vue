@@ -1,8 +1,7 @@
 import Compressor from "compressorjs";
 <template>
     <div>
-        <div class="textarea"><textarea class="textarea_con" v-on:click="inputFocus" maxlength="200" rows="5" v-model="content" placeholder="如在有其他意见或建议，告诉我们吧。"></textarea></div>
-
+        <p class="type_title">1. 使用vant上传组件自定义按钮和图片列表，在微信公众号中可选择微信组件（自带压缩，需要配置微信接口和实现从微信服务器下载图片）</p>
         <div class="img_list">
             <div v-for="(fileUrl,index) in files" v-bind:key="index" class="img_div">
                 <img class="img" :src="fileUrl" alt="" v-on:click="previewImages(fileUrl)"/>
@@ -10,55 +9,48 @@ import Compressor from "compressorjs";
             </div>
         </div>
 
-        <a class="upload" v-on:click="chooseImage" v-if="isWx"><img class="icon" src="@/assets/images/icon_img.png" alt=""/>上传图片</a>
         <div v-on:click="onUpload" v-if="!isWx">
-            <file-upload
-                    class="upload"
-                    ref="upload"
-                    :post-action=uploadUrl
-                    @input-filter="inputFilter"
-                    @input-file="inputFile"
-                    extensions="gif,jpg,jpeg,png,webp"
-                    :size="1024 * 1024 * 10"
-            >
-                上传图片
-            </file-upload>
+            <van-uploader :after-read="uploadFile" :before-read="beforeUpload" multiple :max-count="maxImgCount-files.length">
+                <div class="upload"><img class="icon" src="@/assets/images/icon_img.png"/>上传图片</div>
+            </van-uploader>
+        </div>
+
+        <a class="upload" v-on:click="chooseImage" v-if="isWx"><img class="icon" src="@/assets/images/icon_img.png" alt=""/>上传图片</a>
+
+        <p class="type_title">2. 使用vant上传组件默认样式，部分安卓机型不支持多选，且性能差的机型无法压缩图片</p>
+        <div class="upload_div" v-if="!isWx">
+            <van-uploader  :before-read="beforeUpload" :after-read="uploadFile2" v-model="files2"  multiple :max-count="maxImgCount"/>
+        </div>
+
+        <p class="type_title">3. 使用vant上传组件预览图片</p>
+        <div class="upload_div">
+            <van-uploader v-model="files3" :deletable="false" :show-upload="false"/>
         </div>
     </div>
 </template>
 
 <script>
-    import {fetchData} from "@/mock/fetch";
-    import {getWxPrams} from "@/mock/api";
-    import {getDownloadUrl, showToast, getMobileSystem} from "@/utils/commonTool";
-    import {isWx, wxChooseImage, wxConfig, wxPreviewImages} from "@/utils/wxUtil"
-    import FileUpload  from 'vue-upload-component'
+    import {fetchData} from "../mock/fetch";
+    import {getDownloadUrl, showToast, getMobileSystem, previewImages} from "../utils/commonTool";
+    import {isWx, wxChooseImage, wxConfig, wxPreviewImages} from "../utils/wxUtil"
     import Compressor from 'compressorjs';
-    import LoadingOverlay from 'vue-loading-overlay';
-    import {getUploadUrl} from "../utils/commonTool";
+    import {getBannerList, getWxPrams, uploadFile} from "../mock/api";
 
     export default {
         name: "UploadImage",
         components: {
-            FileUpload,
-            LoadingOverlay
+
         },
         data (){
             return {
-                isWx: isWx(),
-                uploadUrl: getUploadUrl('/uploadFile.do?resultFlag=2', true),
+                maxImgCount: 9,
+                isWx: false,
                 content: '',
                 files:[],
+                files2:[],
+                files3:[],
                 uploading: false,
                 autoCompress: 1024 * 1024,
-                loadStyle: {
-                    // loading图标模式 spinner/dots/bars
-                    loader: 'dots',
-                    width: 35,
-                    height: 35,
-                    color: '#007BFF'
-                },
-                loadVisible: false,
                 errorTimer: null,
                 canCompress: true, //支持压缩
             }
@@ -70,15 +62,19 @@ import Compressor from "compressorjs";
             this.init();
         },
         methods: {
-            inputFocus (e){
-                if(getMobileSystem() != 'IOS'){//安卓机中键盘会遮住输入框
-                    setTimeout(()=>{
-                        document.getElementsByClassName('textarea_con')[0].scrollIntoView();
-                    },200)
-                }
-            },
             init (){
-
+                const that=this;
+                fetchData(getBannerList, {
+                    pageNum: 1,
+                    pageSize: 3
+                },{}, function(res){
+                    console.log(JSON.stringify(res))
+                    if(res){
+                        res.forEach((banner)=>{
+                            that.files3.push({url: banner.imgId});
+                        })
+                    }
+                })
             },
             initWxApi (){
                 fetchData(getWxPrams, {
@@ -92,95 +88,131 @@ import Compressor from "compressorjs";
 
             },
             onUpload (event){
-                if(this.files.length>=3){
-                    showToast("最多只能上传3张图片");
+                if(this.files.length>=this.maxImgCount){
+                    showToast("最多只能上传"+this.maxImgCount+"张图片");
                     // 阻止时间冒泡
                     event.preventDefault();
                     return false;
                 }
             },
-            inputFilter(newFile, oldFile, prevent) {
-                if(newFile && this.files.length>=3){
-                    showToast("最多只能上传3张图片");
-                    return prevent();
+            uploadFile (files){
+                if(!(files instanceof Array)){
+                    files = [files];
+                }
+                files.forEach(file=> {
+                    console.log(file.file.type);
+                    let that = this;
+                    let formData = new FormData();
+                    formData.append("file", file.file);
+                    fetchData(uploadFile, formData, {}, function (res) {
+                        console.log(JSON.stringify(res))
+                        if (res) {
+                            res.fileIdList.forEach(url => {
+                                that.files.push(getDownloadUrl(url));
+                            })
+                        }
+                    })
+                });
+            },
+            uploadFile2 (files){
+                if(!(files instanceof Array)){
+                    files = [files];
+                }
+                files.forEach(file=>{
+                    console.log("开始上传："+file);
+                    file.status = 'uploading';
+                    file.message = '上传中...';
+
+                    let that = this;
+                    let formData = new FormData();
+                    console.log(file.file.size)
+                    formData.append("file", file.file);
+                    fetchData(uploadFile, formData,{}, function(res){
+                        console.log(JSON.stringify(res))
+                        file.status = 'done';
+                        file.message = '';
+                    })
+                })
+            },
+            beforeUpload(files) {
+                if(!(files instanceof Array)){
+                    files = [files];
+                }
+                let compressedFiles=[]
+                let that = this;
+
+                let check = true;
+                files.forEach((newFile)=>{
+                    // console.log("上传前"+newFile);
+                    if (!newFile.type.startsWith('image')) {
+                        showToast('请上传图片');
+                        check=false;
+                    }
+                });
+
+                if(!check){
+                    return false;
                 }
 
-                // Automatic compression
-                // 自动压缩
-                let that = this;
-                if (that.canCompress && newFile && newFile.file && newFile.type.substr(0, 6) === 'image/' && !newFile.isCompressed && this.autoCompress > 0 && this.autoCompress < newFile.size) {
-                    // 防止异步上传，压缩过程中增加异常信息，后面捕获异常形成阻塞
-                    newFile.error = 'compressing'
-                    that.loadVisible=true;
-                    that.errorTimer = setTimeout(() => {
-                        this.loadVisible = false;
-                    }, 60000);
-                    console.log("压缩前:"+newFile.file.size)
-                    new Compressor(newFile.file, {
+                return new Promise( (resolve, reject) => {
+                    files.forEach((newFile)=>{
+                        console.log("压缩前:"+newFile.size)
+                        if (that.canCompress && newFile && newFile.type.substr(0, 6) === 'image/' && this.autoCompress > 0 && this.autoCompress < newFile.size) {
+                            new Compressor(newFile, {
+                                quality: 0.4,
+                                success(file) {
+                                    console.log("压缩后:"+file.size)
+                                    if(file.size == 71725){//手机性能差导致实际压缩失败，变成一张黑色背景图片，后续上传图片则不再压缩
+                                        // showToast('压缩图片失败，请重新上传');
+                                        // reject();
+
+                                        console.log('手机性能差，压缩图片失败，使用原图');
+                                        compressedFiles.push(newFile)
+                                    }else{
+                                        compressedFiles.push(new window.File([file], newFile.name, {type: newFile.type}));
+                                    }
+                                    if(compressedFiles.length == files.length){
+                                        resolve(compressedFiles);
+                                    }
+                                },
+                                error(err) {
+                                    console.log('压缩图片失败:'+err.message+",使用原图");
+                                    // showToast('压缩图片失败:'+err.message);
+                                    // reject();
+                                    compressedFiles.push(newFile)
+                                },
+                            })
+                        }else{
+                            compressedFiles.push(newFile)
+                            if(compressedFiles.length == files.length){
+                                resolve(compressedFiles);
+                            }
+                        }
+                    });
+                });
+            },
+            async compress(newFile){
+                const result= await new Promise((resolve, reject) => {
+                    new Compressor(newFile, {
                         quality: 0.4,
                         success(file) {
                             console.log("压缩后:"+file.size)
                             if(file.size == 71725){//手机性能差导致实际压缩失败，变成一张黑色背景图片，后续上传图片则不再压缩
-                                that.canCompress = false;
-                                that.$refs.upload.update(newFile, { error: '压缩图片失败，请重新上传' });
+                                showToast('压缩图片失败，请重新上传');
+                                reject();
                                 return false;
                             }
-                            that.$refs.upload.update(newFile, { error: '', file, size: file.size, type: file.type, isCompressed: true })
+                            resolve(file);
                         },
                         error(err) {
                             console.log(err.message);
-                            that.$refs.upload.update(newFile, { error: err.message || 'compress' })
+                            showToast('压缩图片失败:'+err.message);
+                            reject();
                         },
                     })
-                }
-            },
-            inputFile (newFile, oldFile){ //文件发生变更事件
-                //直接上传
-                if(newFile){
-                    // console.log("file变更："+this.$refs.upload.active + "," + newFile.active)
-                    if(newFile.error){
-                        // 在压缩过程中，阻止上传但不报错
-                        if(newFile.error!='compressing'){
-                            console.log("上传图片报错："+newFile.error);
-                            showToast("上传失败，请重新上传")
-                            this.completeUpload(newFile);
-                        }
-                        return false;
-                    }
-
-                    if(!this.uploading){
-                        console.log("开始上传");
-                        if(!this.loadVisible){
-                            this.loadVisible=true;
-                        }
-                        this.$refs.upload.active = true;
-                        this.uploading=true;
-                    }else{
-                        if(newFile && !newFile.active){
-                            console.log("上传结束：newFile.active-"+newFile.active+",newFile.success-"+newFile.success)
-                            if(newFile.success){
-                                const response = JSON.parse(newFile.response);
-                                if(response && response.code == '200'){
-                                    console.log("上传成功:"+JSON.stringify(response.data.fileIdList));
-                                    response.data.fileIdList.forEach(url=>{
-                                        this.files.push(getDownloadUrl(url));
-                                    })
-                                }
-                            }else{
-                                console.log("上传失败："+JSON.stringify(newFile));
-                                showToast("上传失败，请重新上传")
-                            }
-                            this.completeUpload(newFile)
-                        }
-                    }
-                }
-            },
-            completeUpload (newFile){
-                this.loadVisible=false;
-                this.errorTimer && clearTimeout(this.errorTimer);
-                this.uploading=false;
-                //上传完成后删除缓存的文件
-                this.$refs.upload.remove(newFile)
+                });
+                console.log("压缩后结果："+result);
+                return result;
             },
             chooseImage (){
                 console.log("选择图片")
@@ -196,7 +228,11 @@ import Compressor from "compressorjs";
                 })
             },
             previewImages (url){
-                wxPreviewImages(url, this.files);
+                if(isWx()){
+                    wxPreviewImages(url, this.files);
+                }else{
+                    previewImages(url, this.files);
+                }
             },
             deleteImage(index){
                 this.files.splice(index, 1);
@@ -206,6 +242,16 @@ import Compressor from "compressorjs";
 </script>
 
 <style scoped>
+    .type_title{
+        line-height: 30px;
+        background-color: #60b0e4;
+        color: #ffffff;
+        text-align: left;
+        padding: 0px 10px;
+    }
+    .upload_div{
+        margin-top: 20px;
+    }
     .img_list{
         margin-top: 30px;
     }
@@ -213,6 +259,7 @@ import Compressor from "compressorjs";
         position: relative;
         display: inline-block;
         margin-right: 10px;
+        margin-top: 10px;
     }
     .img{width:80px;height:80px;}
     .img_close{
@@ -223,8 +270,6 @@ import Compressor from "compressorjs";
         height:16px;
         z-index:1;
     }
-    .textarea{margin:10px;padding:10px;border:1px solid #b3b3b3;border-radius:5px;}
-    .textarea_con{width:100%;font-size:13px;line-height:20px;}
     .upload{
         border:1px solid #b3b3b3;
         line-height:26px;

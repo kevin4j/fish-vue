@@ -1,15 +1,11 @@
-import Vue from 'vue'
-import Router from 'vue-router'
+import {createRouter, createWebHistory } from 'vue-router'
 import HelloWorld from './components/HelloWorld'
-import Test from './components/Test'
 import Index from './page/Index'
 import Second from './page/Second'
 import Third from './page/Third'
 import UploadImage from './page/UploadImage'
 
-Vue.use(Router)
-
-const routers = [
+const routes = [
     {
         path: '/hello',
         name: 'HelloWorld',
@@ -19,11 +15,11 @@ const routers = [
         }
     },
     {
-        path: '/test',
-        name: 'Test',
-        component: Test,
+        path: '/',
+        name: 'Index',
+        component: Index,
         meta: {
-            title: '测试'
+            title: '主页'
         }
     },
     {
@@ -49,20 +45,15 @@ const routers = [
         name: 'UploadImage',
         component: UploadImage,
         meta: {
-            title: '第三层'
+            title: '上传图片'
         }
     },
-    {
-        path: '/',
-        name: 'Index',
-        component: Index,
-        meta: {
-            title: '主页'
-        }
-    }
 ]
-export default new Router({
-    routes: routers,
+
+const routerHistory = createWebHistory()
+let router =createRouter({
+    history: routerHistory,
+    routes: routes,
     scrollBehavior (to, from, savedPosition) {
         if (savedPosition) {
             return savedPosition
@@ -74,3 +65,5 @@ export default new Router({
         }
     }
 })
+
+export default router

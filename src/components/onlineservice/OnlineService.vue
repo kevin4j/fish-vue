@@ -1,32 +1,36 @@
 <template>
     <div style="display: inline-block">
-        <a class="btn_02 wid150 marl15" href="#" v-on:click="open">在线客服</a>
-        <mt-popup style="width: 80%;height: 100%;" v-model="currentValue" position="right" closeOnClickModal="true">
+        <a class="btn_02 wid150 marl15" href="javascript:void(0);" v-on:click="showPopup">{{btnName ? btnName : '在线客服'}}</a>
+        <van-popup style="width: 80%;height: 100%;" v-model:show="show" position="right">
             <div style="height: 100%;overflow-y: scroll;">
-                <iframe style="height: 100%;width: 100%;" :src="online_service" v-if="loadData"></iframe>
+                <iframe style="height: 100%;width: 100%;border: 0px;" :src="online_service" v-if="loadData"></iframe>
             </div>
-        </mt-popup>
+        </van-popup>
     </div>
 </template>
 
 <script>
+    import { ref, toRefs } from 'vue';
     export default {
-        name: "OnlineService",
-        data() {
-            return {
-                currentValue: false,
-                online_service: process.env.VUE_APP_ONLINE_SERVICE,
-                loadData: false,
-            };
+        props: {
+            btnName: String
         },
-        methods: {
-            open() {
-                this.currentValue = true;
-                this.loadData = true;
-            },
-            hide(){
-                this.currentValue = false;
-            }
+        setup(props){
+            const { btnName } = toRefs(props)
+            console.log(btnName.value);
+            const show = ref(false);
+            const loadData = ref(false);
+            const online_service = ref(process.env.VUE_APP_ONLINE_SERVICE);
+            const showPopup = () => {
+                show.value = true;
+                loadData.value = true;
+            };
+            return {
+                show,
+                loadData,
+                online_service,
+                showPopup,
+            };
         }
     }
 </script>

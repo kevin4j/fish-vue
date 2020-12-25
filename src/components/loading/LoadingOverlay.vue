@@ -1,32 +1,16 @@
 <template>
   <div class="vld-parent">
-    <LoadingOverlay :active.sync="loadVisible" :can-cancel="false" :is-full-page="true"
-                    :width="loadStyle.width" :height="loadStyle.height" :color="loadStyle.color"
-                    :loader="loadStyle.loader">
-    </LoadingOverlay>
-    <div class="loading-message_container" v-show="loadVisible">
-      <div class="loading-message">
-        {{loadMes}}
-      </div>
-    </div>
+
   </div>
 </template>
 <script type="text/ecmascript-6">
   import Axios from 'axios'
-  import LoadingOverlay from 'vue-loading-overlay';
-  import 'vue-loading-overlay/dist/vue-loading.css';
+  import {hideLoading, showLoading} from "../../utils/commonTool";
   export default {
-    name: 'loading',
+    name: 'LoadingOverlay',
     data () {
       return {
-        loadStyle: {
-          // loading图标模式 spinner/dots/bars
-          loader: 'dots',
-          width: 35,
-          height: 35,
-          color: '#007BFF'
-        },
-        loadVisible: !1,
+        loadingToast: null,
         loadMes: '',
         method: '',
         mes_loading: '加载数据中',
@@ -36,7 +20,7 @@
       }
     },
     components: {
-      LoadingOverlay
+
     },
     created () {
       this.initial()
@@ -47,14 +31,16 @@
         Axios.interceptors.request.use(request => {
           this.method = request.method;
           // this.loadMes = this.method ? this.mes_loading : this.mes_waiting;
-          this.loadVisible = !request.noLoading;
+          if(!request.noLoading){
+            this.loadingToast = showLoading("稍等片刻");
+          }
           return request;
         });
 
         Axios.interceptors.response.use(response => {
           this.errorTimer && clearTimeout(this.errorTimer);
           setTimeout(() => {
-            this.loadVisible = !1;
+            hideLoading(this.loadingToast)
             this.loadMes = '';
           }, 100);
           return response;
@@ -66,7 +52,7 @@
         console.log('loading error:' + e)
         // this.loadMes = this.method === 'get' ? this.mes_timeout_get : this.mes_timeout_post;
         this.errorTimer = setTimeout(() => {
-          this.loadVisible = !1;
+          hideLoading(this.loadingToast)
           this.loadMes = ''
         }, 2000);
         return Promise.reject(e)
@@ -75,20 +61,5 @@
   }
 </script>
 <style>
-  .loading-message_container{
-    top:0;
-    bottom:0;
-    left:0;
-    right: 0;
-    display: flex;
-    position: fixed;
-    align-items: center;
-  }
-  .loading-message_container .loading-message{
-    text-align: center;
-    margin-top: 40px;
-    /*color: #e61414;*/
-    font-size: 14px;
-    width: 100%;
-  }
+
 </style>

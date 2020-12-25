@@ -1,23 +1,24 @@
 # fish-vue
 
 ## 项目简介
-> VUE前后端分离入门学习，当前项目适用于移动端H5  
-> 当前项目使用[@vue/cli（vue-cli 3）](https://cli.vuejs.org/zh/guide/)创建
+> VUE 3 前后端分离入门学习，当前项目适用于移动端H5  
+> 当前项目使用[@vue/cli（vue-cli 5）](https://cli.vuejs.org/zh/guide/)创建
 
 ## DEMO效果图
 > ![DEMO效果](https://github.com/kevin4j/fish-vue/blob/master/fish-vue-demo.gif)
 
 ## 主要功能
-> * 使用Axios进行ajax请求发送 
+> * 使用Axios进行ajax请求发送，拦截器设置loading
 > * 自定义滑动滚动条加载分页数据 scrollLoad
-> * 使用vue-loading-overlay支持页面加载loading动画
+> * ~~使用vue-loading-overlay支持页面加载loading动画~~ 替换为Vant组件
 > * 使用keep-alive+include+vuex支持页面跳转缓存前一页（列表页跳详情页）
 > * 支持meta页面主题变更
 > * 使用MockJs支持模拟api和数据
 > * ~~使用cross-env，支持多环境配置打包~~ 替换为vue-cli-service的mode模式
-> * 引入mint-ui, 使用Toast(提示框), MessageBox（确认框）, Popup（弹窗）, Pull Down（下拉）, Pull Up（上拉）
-> * 非微信浏览器支持vue-upload-component上传图片
+> * ~~引入mint-ui, 使用Toast(提示框), MessageBox（确认框）, Popup（弹窗）, Pull Down（下拉）, Pull Up（上拉）~~ 替换为Vant组件
+> * ~~非微信浏览器支持vue-upload-component上传图片~~ 替换为Vant组件
 > * 微信浏览器支持微信图片上传接口
+> * 移除VUE 2的第三方组件，使用Vant(Vue 3版本)替换UI组件
 
 
 ## 安装、启动或编译

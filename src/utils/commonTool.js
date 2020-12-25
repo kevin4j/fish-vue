@@ -3,7 +3,7 @@
  * @author kevin
  */
 
-import { Toast, MessageBox } from 'mint-ui';
+import { Toast, Dialog, ImagePreview } from 'vant';
 
 const MOCK_PATH = '/api';
 
@@ -20,14 +20,49 @@ function getMobileSystem() {
 }
 
 /**
+ * 加载
+ * @param message
+ */
+function showLoading(message){
+  return Toast.loading({
+    message: message || '加载中...',
+    forbidClick: true,
+    loadingType: 'spinner',
+    duration: 0,
+  });
+}
+
+function hideLoading(loadingToast){
+  loadingToast && loadingToast.clear();
+}
+
+/**
  * 提示信息
  * @param message
  */
 function showToast(message){
   return Toast({
     message: message,
-    position: 'center',
+    position: 'middle',
     duration: 2000
+  });
+}
+
+/**
+ * 提示
+ * @param message
+ * @param title
+ * @param callback
+ * @returns {Promise<DialogAction>}
+ */
+function showAlert(message, title, callback){
+  return Dialog.alert({
+    title: title ? title : '',
+    message: message,
+    confirmButtonText: '确认',
+    confirmButtonColor: '#3d36ee',
+  }).then(() => {
+    callback && callback.call();
   });
 }
 
@@ -38,12 +73,26 @@ function showToast(message){
  * @param confirm_callback
  * @returns {Promise<T>}
  */
-function showConfirm(message, title, confirm_callback){
-  return MessageBox.confirm(message, title ? title : '').then(action => {
-    if(action == 'confirm'){
-      confirm_callback && confirm_callback.call();
-    }
+function showConfirm(message, title, confirm_callback, cancel_callback){
+  return Dialog.confirm({
+    title: title ? title : '',
+    message: message,
+    confirmButtonText: '确认',
+    confirmButtonColor: '#3d36ee',
+  }).then(() => {
+    confirm_callback && confirm_callback.call();
+  }).catch(() => {
+    cancel_callback && cancel_callback.call();
   });
+}
+
+/**
+ * 预览图片
+ * @param current 当前图片
+ * @param urls  图片集
+ */
+function previewImages(current, urls, options){
+  ImagePreview({images: urls, startPosition:urls.indexOf(current), ...options});
 }
 
 /**
@@ -139,6 +188,9 @@ function getUserAccount(){
 
 export {
   getMobileSystem,
+  showLoading,
+  hideLoading,
+  previewImages,
   assignObj,
   uuid,
   getLocalUrlKey,

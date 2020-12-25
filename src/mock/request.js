@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {assignObj, getApiUrl, getToken} from '../utils/commonTool';
+import {assignObj, getApiUrl, getToken, getUploadUrl} from '../utils/commonTool';
 import qs from 'qs';
 
 axios.defaults.timeout=10000;
@@ -11,10 +11,19 @@ const getMock = (url, isMock) => {
 
 const postMock = (url, isMock) => {
   return (params, options) => {
-    options = assignObj(options, 'headers', {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    });
+    if((!options.headers || !options.headers['Content-Type']) && !(params instanceof FormData)){
+      options = assignObj(options, 'headers', {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      });
+    }
     return requestMock(url, 'post', params, options, isMock);
+  }
+};
+
+const postMultipartMock = (url, isMock) => {
+  return (params, options) => {
+    let urlPath = getUploadUrl(url, isMock);
+    return axios.post(urlPath, params, options)
   }
 };
 
@@ -49,16 +58,22 @@ const requestMock = (url, method, params, options, isMock) => {
   }
 
   if((method == 'post' || method == 'put' || method == 'patch')){
-    requestConfig.data = qs.stringify(params);
+    if(options.headers && options.headers['Content-Type'] == 'application/x-www-form-urlencoded'){
+      requestConfig.data = qs.stringify(params);
+    }else{
+      requestConfig.data = params;
+    }
   }else{
     requestConfig.params = params;
   }
+  console.debug(JSON.stringify(requestConfig))
   return axios.request(requestConfig)
 }
 
 export {
   getMock,
   postMock,
+  postMultipartMock,
   putMock,
   patchMock,
   deleteMock,

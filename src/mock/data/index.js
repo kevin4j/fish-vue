@@ -2,6 +2,10 @@
 import getRandomImgUrl from './image'
 
 const Mock = require('mockjs')
+// 模拟ajax请求延迟响应
+Mock.setup({
+  timeout: '500-2000'
+})
 const Random = Mock.Random;
 
 function getQueryParams (url) {
@@ -24,7 +28,7 @@ function renderPageLimit (pageNum, pageSize, total) {
 
 Mock.mock('/api/author', 'get', renderResult({'id': '1', 'name': 'kevin'}))
 
-Mock.mock('/api/category', 'get', function (options) {
+Mock.mock('/api/category', 'post', function (options) {
   let data = [];
   for (let i = 1; i <= 6; i++) {
     data.push(Mock.mock({

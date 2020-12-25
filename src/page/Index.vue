@@ -19,7 +19,7 @@
       </ul>
     </div>
     <div class="btn_div">
-      <OnlineService></OnlineService>
+      <OnlineService btnName="咨询作者"></OnlineService>
     </div>
   </div>
 </template>
@@ -31,6 +31,8 @@
 
   export default {
       name: 'Index',
+      components: {
+      },
       data () {
         const imgHeight=Math.ceil((getWindowWidth()*0.47)*300/350)+'px';
         return {
@@ -49,6 +51,7 @@
         initCategory(){
           let that = this;
           fetchData(getCategoryList, {}, {}, (res)=>{
+            console.log(res)
             that.list = res;
           })
         }
