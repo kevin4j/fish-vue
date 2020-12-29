@@ -10,6 +10,18 @@
     </div>
     <div class="category_div">
       <ul class="category_list">
+        <li>
+          <router-link :to="{name: 'PageLoad'}">
+            <p class="find_goods_img" v-bind:style="{ lineHeight:imgHeight }"><img v-bind:src="pageLoadImgUrl" alt="" v-bind:style="{ height:imgHeight }"/></p>
+            <p class="title">分页加载组件</p>
+          </router-link>
+        </li>
+        <li>
+          <router-link :to="{name: 'UploadImage'}">
+            <p class="find_goods_img" v-bind:style="{ lineHeight:imgHeight }"><img v-bind:src="uploadImgUrl" alt="" v-bind:style="{ height:imgHeight }"/></p>
+            <p class="title">上传组件</p>
+          </router-link>
+        </li>
         <li v-for="msg in list" v-bind:key="msg.id">
           <router-link :to="{name: 'Second', params:{ title: msg.name}}">
             <p class="find_goods_img" v-bind:style="{ lineHeight:imgHeight }"><img v-bind:src="msg.coverImgUrl" alt="" v-bind:style="{ height:imgHeight }"/></p>
@@ -28,6 +40,7 @@
   import {getWindowWidth} from "../utils/window";
   import {getCategoryList} from '../mock/api';
   import {fetchData} from "../mock/fetch";
+  import {getRandomImgTextUrl} from "../mock/data/image";
 
   export default {
       name: 'Index',
@@ -41,7 +54,9 @@
           list: [],
           API_BASE_URL: process.env.VUE_APP_API_BASE_URL,
           IMG_BASE_URL: process.env.VUE_APP_IMG_BASE_URL,
-          NODE_ENV: process.env.VUE_APP_NODE_ENV
+          NODE_ENV: process.env.VUE_APP_NODE_ENV,
+          pageLoadImgUrl : getRandomImgTextUrl('Page'),
+          uploadImgUrl : getRandomImgTextUrl('Upload'),
         }
       },
       mounted() {
@@ -51,7 +66,6 @@
         initCategory(){
           let that = this;
           fetchData(getCategoryList, {}, {}, (res)=>{
-            console.log(res)
             that.list = res;
           })
         }

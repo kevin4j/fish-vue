@@ -1,10 +1,10 @@
 
-import getRandomImgUrl from './image'
+import {getRandomImgUrl} from './image'
 
 const Mock = require('mockjs')
 // 模拟ajax请求延迟响应
 Mock.setup({
-  timeout: '500-2000'
+  timeout: '100-300'
 })
 const Random = Mock.Random;
 
@@ -19,6 +19,9 @@ function getQueryParams (url) {
   return params;
 }
 
+function renderErrorResult (code, text) {
+  return {code: (code == undefined ? 400 : code), text: text || '系统异常'}
+}
 function renderResult (data, pageLimit) {
   return {code: 200, data: data, pageLimit: pageLimit || null}
 }
@@ -44,6 +47,7 @@ Mock.mock('/api/category', 'post', function (options) {
 })
 
 Mock.mock(/\/api\/banner?/, 'get', function (options) {
+  console.log("模拟请求："+JSON.stringify(options));
   const params = getQueryParams(options.url);
   const pageNum = parseInt(params.pageNum);
   const pageSize = parseInt(params.pageSize);
@@ -60,7 +64,11 @@ Mock.mock(/\/api\/banner?/, 'get', function (options) {
       'imgId': getRandomImgUrl()
     }))
   }
-  return renderResult(data, renderPageLimit(pageNum, pageSize))
+  if(params && params.withError && Random.boolean(8, 2, false)){
+    return renderErrorResult(400, "系统繁忙");
+  }else{
+    return renderResult(data, renderPageLimit(pageNum, pageSize))
+  }
 })
 
 Mock.mock(/\/api\/uploadFile.do?/, 'post', function(options){

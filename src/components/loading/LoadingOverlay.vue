@@ -39,10 +39,8 @@
 
         Axios.interceptors.response.use(response => {
           this.errorTimer && clearTimeout(this.errorTimer);
-          setTimeout(() => {
-            hideLoading(this.loadingToast)
-            this.loadMes = '';
-          }, 100);
+          hideLoading(this.loadingToast)
+          this.loadMes = '';
           return response;
         }, error => {
           this.errorHanding(error)

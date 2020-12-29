@@ -9,6 +9,7 @@ import {gotoWxGrant, isWx} from "./utils/wxUtil";
 import { Popup, Loading, List, PullRefresh, Uploader } from 'vant';
 import OnlineService from "./components/onlineservice/OnlineService";
 import LoadingOverlay from "./components/loading/LoadingOverlay";
+import PageLoad from "./components/pageload/PageLoad";
 
 /* 响应式状态存储，用来缓存页面 */
 const store = new Vuex.Store({
@@ -63,6 +64,6 @@ app.use(Popup).use(Loading).use(List).use(PullRefresh).use(Uploader);
 // 注册在线客服组件
 app.component("LoadingOverlay", LoadingOverlay)
 app.component("OnlineService", OnlineService);
-
+app.component("PageLoad", PageLoad);
 
 app.mount('#app');

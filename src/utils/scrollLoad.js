@@ -25,20 +25,21 @@ const getDefaultPagePrams = (params)=>{
  * 定义滑动滚动条加载实例， 初始化第一页数据和滚动条监听事件
  * @param fetchName 接口名
  * @param params 参数
- * @param callback 加载数据后回调
+ * @param successCallback 加载数据成功后回调
+ * @param failCallback 加载数据失败后回调
  * @param options 可选项，如扩展url（expandUrl）、配置Axios请求可选项等
  */
-const scrollLoad = (fetchName, params, options, callback) => {
+const scrollLoad = (fetchName, params, options, successCallback, failCallback) => {
   // 优先自定义分页
   let pageParams = getDefaultPagePrams(params);
 
   // 监听滚动条事件加载分页事件
   window.addEventListener('scroll', function () {
-    scrollLoadData(fetchName, params, options, callback, pageParams);
+    scrollLoadData(fetchName, params, options, successCallback, failCallback, pageParams);
   });
 
   // 默认初始化加载第一页
-  return loadPageData(fetchName, params, options, callback, pageParams);
+  return loadPageData(fetchName, params, options, successCallback, failCallback, pageParams);
 }
 
 /**
@@ -49,7 +50,7 @@ const scrollLoad = (fetchName, params, options, callback) => {
  * @param pageParams
  * @param options
  */
-const scrollLoadData = (fetchName, params, options, callback, pageParams) => {
+const scrollLoadData = (fetchName, params, options, successCallback, failCallback, pageParams) => {
   if (pageParams.hasNextPage && !pageParams.isScrollLoading) {
     if (!pageParams.isScrollLoading) {
       // 浏览器的高度加上滚动条的高度
@@ -69,7 +70,7 @@ const scrollLoadData = (fetchName, params, options, callback, pageParams) => {
         }, 300);
 
         console.log(JSON.stringify(pageParams))
-        return loadPageData(fetchName, params, options, callback, pageParams);
+        return loadPageData(fetchName, params, options, successCallback, failCallback, pageParams);
       }
     }
   }
@@ -78,7 +79,7 @@ const scrollLoadData = (fetchName, params, options, callback, pageParams) => {
 /**
  * 加载分页数据
  */
-const loadPageData = (fetchName, params, options, callback, pageParams) => {
+const loadPageData = (fetchName, params, options, successCallback, failCallback, pageParams) => {
   if(!pageParams){
     pageParams = getDefaultPagePrams(params);
   }
@@ -93,9 +94,9 @@ const loadPageData = (fetchName, params, options, callback, pageParams) => {
       pageParams[pageLengthName] = pageLimit[pageLengthName];
       pageParams[totalName] = pageLimit[totalName];
 
-      callback && callback.call(this, data, pageParams);
+      successCallback && successCallback.call(this, data, pageParams);
     }
-  });
+  }, failCallback);
 }
 
 export {

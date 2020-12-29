@@ -4,6 +4,7 @@ import Index from './page/Index'
 import Second from './page/Second'
 import Third from './page/Third'
 import UploadImage from './page/UploadImage'
+import PageLoadTest from "./page/PageLoadTest";
 
 const routes = [
     {
@@ -46,6 +47,14 @@ const routes = [
         component: UploadImage,
         meta: {
             title: '上传图片'
+        }
+    },
+    {
+        path: '/pageLoad',
+        name: 'PageLoad',
+        component: PageLoadTest,
+        meta: {
+            title: '第三层'
         }
     },
 ]

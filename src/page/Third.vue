@@ -6,7 +6,7 @@
     <div>
       author: {{ user.name }}
     </div>
-    <div style="height:160px;text-align: center; margin: 0 auto">
+    <div class="img_div">
       <img v-bind:src="detail.imgId"/>
     </div>
     <div>
@@ -15,7 +15,7 @@
       <a style="margin-left:20px;" href="javascript:void(0);" v-on:click="gotoUploadImage">上传图片Demo</a>
     </div>
     <p class="sublist_title">子列表(下拉刷新，上拉加载更多)</p>
-    <div class="install_content page-loadmore-wrapper" ref="wrapper" :style="{ height: wrapperHeight + 'px' }">
+    <div class="page-wrapper" ref="wrapper" :style="{ height: wrapperHeight + 'px' }">
       <van-pull-refresh v-model="loading" @refresh="onRefresh">
         <van-list v-model:loading="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
           <ul class="category_list">
@@ -26,9 +26,6 @@
         </van-list>
       </van-pull-refresh>
     </div>
-
-
-
   </div>
 </template>
 
@@ -88,7 +85,7 @@
             that.finished = !pageLimit.hasNextPage;
           }
           that.loading=false;
-        }, that.pageParams)
+        },null, that.pageParams)
       },
       goBack (){
         showConfirm("确认返回？", "", ()=>{
@@ -112,7 +109,11 @@
     max-width: 100%;
     max-height: 100%;
   }
-  .page-loadmore-wrapper {
+  .content .img_div{
+    height:160px;
+    margin: 0 auto
+  }
+  .page-wrapper {
     overflow: scroll;
   }
   .sublist_title{

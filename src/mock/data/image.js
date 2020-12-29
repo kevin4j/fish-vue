@@ -38,4 +38,11 @@ const getRandomImgUrl = () => {
   return Random.imgUrl();
 }
 
-export default getRandomImgUrl
+const getRandomImgTextUrl = (text) => {
+  return Random.image('350x300', Random.color(),'#FFF', text)
+}
+
+export {
+  getRandomImgUrl,
+  getRandomImgTextUrl
+}
