@@ -1,10 +1,10 @@
 <template>
   <div class="content">
-    <div>{{title}}</div>
+    <div>简单滚动加载，不支持下拉刷新</div>
 
     <div>{{ '加载次数：'+ incrCount }}</div>
     <div style="margin-bottom: 10px;" v-for="banner in data" v-bind:key="banner.id">
-      <router-link :to="{path: '/third', query: banner}">
+      <router-link :to="{path: '/detail', query: banner}">
         <div>{{banner.info}}</div>
         <div>
           <img v-bind:src="banner.imgId"/>
@@ -21,10 +21,10 @@
 <script>
   import {getBannerList} from '../mock/api';
   import {scrollLoad} from '../utils/scrollLoad';
-  import {getDownloadUrl, showToast} from '../utils/commonTool';
+  import {getDownloadUrl, showAlert} from '../utils/commonTool';
 
   export default {
-    name: 'Second',
+    name: 'ScrollLoadTest',
     props: {
       title: String
     },
@@ -41,9 +41,9 @@
       }
     },
     mounted () {
-      console.log('msg:'+this.$route.params.title);
+      showAlert("监听滚动条事件，自动加载分页数据")
       this.init();
-      showToast("监听滚动条事件，自动加载分页数据")
+
     },
     methods: {
       init () {
@@ -58,19 +58,10 @@
       }
     },
     beforeRouteLeave (to, from, next) {
-      console.log(to.path);
-      if (to.path === '/third') {
-        this.$store.commit('setCacheComponents', ['Second'])
-        if (!this.isHistory) {
-          this.isHistory = true;
-          // 等待store响应，否则会出现第一次不缓存
-          setTimeout(next, 100)
-        } else {
-          next();
-        }
+      if (to.path === '/detail') {
+        this.$store.commit('addCacheComponents', {name:'ScrollLoadTest', next: next});
       } else {
-        this.$store.commit('setCacheComponents', [])
-        next();
+        this.$store.commit('removeCacheComponents', {name:'ScrollLoadTest', next: next})
       }
     }
   }

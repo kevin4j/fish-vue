@@ -10,6 +10,7 @@
     name: 'LoadingOverlay',
     data () {
       return {
+        loadingCount: 0,
         loadingToast: null,
         loadMes: '',
         method: '',
@@ -33,14 +34,20 @@
           // this.loadMes = this.method ? this.mes_loading : this.mes_waiting;
           if(!request.noLoading){
             this.loadingToast = showLoading("稍等片刻");
+            this.loadingCount ++;
           }
           return request;
         });
 
         Axios.interceptors.response.use(response => {
           this.errorTimer && clearTimeout(this.errorTimer);
-          hideLoading(this.loadingToast)
-          this.loadMes = '';
+          if(!response.config || !response.config.noLoading){
+            this.loadingCount --;
+          }
+
+          if(this.loadingCount<=0){
+            this.clearLoading();
+          }
           return response;
         }, error => {
           this.errorHanding(error)
@@ -50,10 +57,14 @@
         console.log('loading error:' + e)
         // this.loadMes = this.method === 'get' ? this.mes_timeout_get : this.mes_timeout_post;
         this.errorTimer = setTimeout(() => {
-          hideLoading(this.loadingToast)
-          this.loadMes = ''
+          this.clearLoading();
         }, 2000);
         return Promise.reject(e)
+      },
+      clearLoading(){
+        this.loadingCount = 0;
+        hideLoading(this.loadingToast)
+        this.loadMes = '';
       }
     }
   }

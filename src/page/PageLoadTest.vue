@@ -13,7 +13,7 @@
     import PageLoad from "../components/pageload/PageLoad";
     import {getBannerList} from '../mock/api'
     export default {
-        name: "Test",
+        name: "PageLoadTest",
         components: {PageLoad},
         data (){
             return {

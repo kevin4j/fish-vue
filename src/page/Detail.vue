@@ -3,16 +3,11 @@
     <div>
       主题：{{detail.info}}
     </div>
-    <div>
-      author: {{ user.name }}
-    </div>
     <div class="img_div">
       <img v-bind:src="detail.imgId"/>
     </div>
     <div>
       <a href="javascript:void(0);" v-on:click="goBack">返回</a>
-
-      <a style="margin-left:20px;" href="javascript:void(0);" v-on:click="gotoUploadImage">上传图片Demo</a>
     </div>
     <p class="sublist_title">子列表(下拉刷新，上拉加载更多)</p>
     <div class="page-wrapper" ref="wrapper" :style="{ height: wrapperHeight + 'px' }">
@@ -30,13 +25,12 @@
 </template>
 
 <script>
-  import {getAuthor, getBannerList} from '../mock/api'
-  import {fetchData} from '../mock/fetch';
-  import {getDefaultPagePrams, loadPageData, scrollLoad} from "@/utils/scrollLoad"
+  import {getBannerList} from '../mock/api'
+  import {getDefaultPagePrams, loadPageData} from "../utils/scrollLoad"
   import {showConfirm} from "../utils/commonTool";
 
   export default {
-    name: 'Third',
+    name: 'Detail',
     data () {
       return {
         user: {},
@@ -49,7 +43,6 @@
       }
     },
     mounted () {
-      this.init();
       const that = this;
       setTimeout(function(){
         console.log(that.$refs.wrapper.getBoundingClientRect().top)
@@ -59,13 +52,6 @@
       },200)
     },
     methods: {
-      init () {
-        return fetchData(getAuthor, {}, {}, (res) => {
-          if (res) {
-            this.user = res
-          }
-        })
-      },
       onRefresh (){
         let that = this;
         that.list = [];

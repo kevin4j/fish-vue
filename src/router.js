@@ -1,10 +1,11 @@
 import {createRouter, createWebHistory } from 'vue-router'
 import HelloWorld from './components/HelloWorld'
 import Index from './page/Index'
-import Second from './page/Second'
-import Third from './page/Third'
+import List from './page/List'
+import Detail from './page/Detail'
 import UploadImage from './page/UploadImage'
 import PageLoadTest from "./page/PageLoadTest";
+import ScrollLoadTest from "./page/ScrollLoadTest";
 
 const routes = [
     {
@@ -24,19 +25,19 @@ const routes = [
         }
     },
     {
-        path: '/second/:title',
-        name: 'Second',
-        component: Second,
+        path: '/list/:title',
+        name: 'List',
+        component: List,
         meta: {
-            title: '第二层',
+            title: '列表',
             keepAlive: true
         },
         props: true
     },
     {
-        path: '/third',
-        name: 'Third',
-        component: Third,
+        path: '/detail',
+        name: 'Detail',
+        component: Detail,
         meta: {
             title: '第三层'
         }
@@ -50,11 +51,19 @@ const routes = [
         }
     },
     {
-        path: '/pageLoad',
-        name: 'PageLoad',
+        path: '/pageLoadTest',
+        name: 'PageLoadTest',
         component: PageLoadTest,
         meta: {
-            title: '第三层'
+            title: '分页加载'
+        }
+    },
+    {
+        path: '/scrollLoadTest',
+        name: 'ScrollLoadTest',
+        component: ScrollLoadTest,
+        meta: {
+            title: '滚动加载'
         }
     },
 ]

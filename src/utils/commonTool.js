@@ -20,7 +20,7 @@ function getMobileSystem() {
 }
 
 /**
- * 加载
+ * 显示加载窗口
  * @param message
  */
 function showLoading(message){
@@ -32,6 +32,10 @@ function showLoading(message){
   });
 }
 
+/**
+ * 隐藏加载窗口
+ * @param loadingToast
+ */
 function hideLoading(loadingToast){
   loadingToast && loadingToast.clear();
 }
@@ -71,7 +75,7 @@ function showAlert(message, title, callback){
  * @param message
  * @param title
  * @param confirm_callback
- * @returns {Promise<T>}
+ * @returns {Promise<DialogAction>}
  */
 function showConfirm(message, title, confirm_callback, cancel_callback){
   return Dialog.confirm({
@@ -200,6 +204,7 @@ export {
   getUploadUrl,
   getDownloadUrl,
   showToast,
+  showAlert,
   showConfirm,
   setUserInfo,
   getUserInfo,

@@ -4,9 +4,10 @@ import App from './App'
 import router from './router'
 import './mock/data'
 import {clearUserInfo, getLocalUrlKey, isDebug} from './utils/commonTool'
+import './utils/prototype'
 import VConsole from 'vconsole'
 import {gotoWxGrant, isWx} from "./utils/wxUtil";
-import { Popup, Loading, List, PullRefresh, Uploader } from 'vant';
+import { Popup, Loading, List, PullRefresh, Uploader, Divider } from 'vant';
 import OnlineService from "./components/onlineservice/OnlineService";
 import LoadingOverlay from "./components/loading/LoadingOverlay";
 import PageLoad from "./components/pageload/PageLoad";
@@ -16,12 +17,42 @@ const store = new Vuex.Store({
     state: {
         cacheComponents: [] // 需要缓存的组件，在具体页面跳转前进行设置
     },
+    getters: {
+        getCacheComponents: state => {
+            return state.cacheComponents;
+        },
+        getCacheComponentIndex: (state) => (name) => {
+            for (let i = 0; i < state.cacheComponents.length; i++) {
+                if (state.cacheComponents[i] == name){
+                    return i;
+                }
+            }
+            return -1;
+        }
+    },
     mutations: {
         setCacheComponents (state, data) {
             state.cacheComponents = data;
+        },
+        addCacheComponents (state, option) {
+            if(store.getters.getCacheComponentIndex(option.name) < 0){
+                state.cacheComponents.push(option.name);
+                // 等待store响应，否则会出现第一次不缓存
+                setTimeout(()=>{option.next();}, 100)
+            }  else {
+                option.next();
+            }
+        },
+        removeCacheComponents (state, option){
+            let index=store.getters.getCacheComponentIndex(option.name);
+            if (index > -1) {
+                state.cacheComponents.splice(index, 1);
+            }
+            option.next();
         }
     }
 })
+
 
 /* 页面跳转更新title */
 router.beforeEach((to, from, next) => {
@@ -59,7 +90,7 @@ let app=createApp(App);
 app.use(router).use(store)
 
 // 注册vant组件
-app.use(Popup).use(Loading).use(List).use(PullRefresh).use(Uploader);
+app.use(Popup).use(Loading).use(List).use(PullRefresh).use(Uploader).use(Divider);
 
 // 注册在线客服组件
 app.component("LoadingOverlay", LoadingOverlay)

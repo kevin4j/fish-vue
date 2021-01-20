@@ -34,7 +34,7 @@ const fetchData = async (fetchName, params, options, successCallback, failCallba
         }
       }
     } else {
-      showToast("no response");
+      showToast("系统异常：no response");
     }
   } catch (e) {
     console.error(e);

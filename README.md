@@ -79,8 +79,8 @@
     │          
     ├─page              #页面组件
     │      Index.vue
-    │      Second.vue
-    │      Third.vue
+    │      List.vue
+    │      Detail.vue
     │      
     └─utils             #工具包
             commonTool.js   #通用工具包

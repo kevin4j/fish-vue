@@ -9,21 +9,32 @@
       <p>{{IMG_BASE_URL}}</p>
     </div>
     <div class="category_div">
+      <van-divider :style="{ color: '#1989fa', borderColor: '#1989fa', padding: '0 16px' }">组件Demo</van-divider>
       <ul class="category_list">
         <li>
-          <router-link :to="{name: 'PageLoad'}">
+          <router-link :to="{name: 'PageLoadTest'}">
             <p class="find_goods_img" v-bind:style="{ lineHeight:imgHeight }"><img v-bind:src="pageLoadImgUrl" alt="" v-bind:style="{ height:imgHeight }"/></p>
             <p class="title">分页加载组件</p>
           </router-link>
         </li>
         <li>
-          <router-link :to="{name: 'UploadImage'}">
-            <p class="find_goods_img" v-bind:style="{ lineHeight:imgHeight }"><img v-bind:src="uploadImgUrl" alt="" v-bind:style="{ height:imgHeight }"/></p>
-            <p class="title">上传组件</p>
+          <router-link :to="{name: 'ScrollLoadTest'}">
+            <p class="find_goods_img" v-bind:style="{ lineHeight:imgHeight }"><img v-bind:src="scrollLoadImgUrl" alt="" v-bind:style="{ height:imgHeight }"/></p>
+            <p class="title">简单滚动加载组件</p>
           </router-link>
         </li>
+        <li>
+          <router-link :to="{name: 'UploadImage'}">
+            <p class="find_goods_img" v-bind:style="{ lineHeight:imgHeight }"><img v-bind:src="uploadImgUrl" alt="" v-bind:style="{ height:imgHeight }"/></p>
+            <p class="title">上传图片组件</p>
+          </router-link>
+        </li>
+      </ul>
+
+      <van-divider :style="{ color: '#1989fa', borderColor: '#1989fa', padding: '0 16px' }">测试数据</van-divider>
+      <ul class="category_list">
         <li v-for="msg in list" v-bind:key="msg.id">
-          <router-link :to="{name: 'Second', params:{ title: msg.name}}">
+          <router-link :to="{name: 'List', params:{ title: msg.name}}">
             <p class="find_goods_img" v-bind:style="{ lineHeight:imgHeight }"><img v-bind:src="msg.coverImgUrl" alt="" v-bind:style="{ height:imgHeight }"/></p>
             <p class="title">{{ msg.name}}</p>
           </router-link>
@@ -38,7 +49,7 @@
 
 <script>
   import {getWindowWidth} from "../utils/window";
-  import {getCategoryList} from '../mock/api';
+  import {getAuthor, getCategoryList} from '../mock/api';
   import {fetchData} from "../mock/fetch";
   import {getRandomImgTextUrl} from "../mock/data/image";
 
@@ -49,20 +60,30 @@
       data () {
         const imgHeight=Math.ceil((getWindowWidth()*0.47)*300/350)+'px';
         return {
-          username: 'kevin',
+          username: '',
           imgHeight,
           list: [],
           API_BASE_URL: process.env.VUE_APP_API_BASE_URL,
           IMG_BASE_URL: process.env.VUE_APP_IMG_BASE_URL,
           NODE_ENV: process.env.VUE_APP_NODE_ENV,
           pageLoadImgUrl : getRandomImgTextUrl('Page'),
+          scrollLoadImgUrl : getRandomImgTextUrl('Scroll'),
           uploadImgUrl : getRandomImgTextUrl('Upload'),
+
         }
       },
       mounted() {
+        this.initAuthor();
         this.initCategory();
       },
       methods:{
+        initAuthor () {
+          return fetchData(getAuthor, {}, {}, (res) => {
+            if (res) {
+              this.username = res.name;
+            }
+          })
+        },
         initCategory(){
           let that = this;
           fetchData(getCategoryList, {}, {}, (res)=>{
