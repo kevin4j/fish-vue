@@ -97,4 +97,6 @@ app.component("LoadingOverlay", LoadingOverlay)
 app.component("OnlineService", OnlineService);
 app.component("PageLoad", PageLoad);
 
-app.mount('#app');
+router.isReady().then(()=>{
+    app.mount('#app');
+})

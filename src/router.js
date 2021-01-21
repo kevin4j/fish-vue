@@ -1,4 +1,4 @@
-import {createRouter, createWebHistory } from 'vue-router'
+import {createRouter, createWebHashHistory } from 'vue-router'
 import HelloWorld from './components/HelloWorld'
 import Index from './page/Index'
 import List from './page/List'
@@ -68,7 +68,8 @@ const routes = [
     },
 ]
 
-const routerHistory = createWebHistory()
+// history模式，createWebHashHistory模式对应#显示url，如果对SEO有要求，可以选择createWebHistory模式显示实际url（需要处理404的异常）
+const routerHistory = createWebHashHistory()
 let router =createRouter({
     history: routerHistory,
     routes: routes,
