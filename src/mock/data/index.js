@@ -1,5 +1,6 @@
 
 import {getRandomImgUrl} from './image'
+import {pageNumName, pageSizeName, currentPageName, pageLengthName, totalName} from "../../utils/scrollLoad";
 
 const Mock = require('mockjs')
 // 模拟ajax请求延迟响应
@@ -26,7 +27,7 @@ function renderResult (data, pageLimit) {
   return {code: 200, data: data, pageLimit: pageLimit || null}
 }
 function renderPageLimit (pageNum, pageSize, total) {
-  return {pageNum: pageNum, pageSize: pageSize, total: total || pageSize * 5}
+  return {[currentPageName]: pageNum, [pageLengthName]: pageSize, [totalName]: total || pageSize * 5}
 }
 
 Mock.mock('/api/author', 'get', renderResult({'id': '1', 'name': 'kevin'}))
@@ -49,8 +50,8 @@ Mock.mock('/api/category', 'post', function (options) {
 Mock.mock(/\/api\/banner?/, 'get', function (options) {
   console.log("模拟请求："+JSON.stringify(options));
   const params = getQueryParams(options.url);
-  const pageNum = parseInt(params.pageNum);
-  const pageSize = parseInt(params.pageSize);
+  const pageNum = parseInt(params[pageNumName]);
+  const pageSize = parseInt(params[pageSizeName]);
   let min = (pageNum - 1) * pageSize + 1;
   const max = pageNum * pageSize;
   let data = [];

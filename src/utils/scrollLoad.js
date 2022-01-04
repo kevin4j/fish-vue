@@ -6,11 +6,11 @@
 import {fetchData} from '../mock/fetch'
 import {getWindowHeight, getScrollTop, getDocumentHeight} from "./window";
 
-const pageNumName="pageNum";
-const pageSizeName="pageSize";
-const currentPageName="pageNum";
-const pageLengthName="pageSize";
-const totalName="total";
+const pageNumName="page"; //分页参数，第几页
+const pageSizeName="pageLength"; //分页参数，每页记录数
+const currentPageName="pageNum"; //分页返回，第几页
+const pageLengthName="pageSize"; //分页返回，每页记录数
+const totalName="total"; //分页返回，记录总数
 
 const getDefaultPagePrams = (params)=>{
   return {
@@ -90,9 +90,11 @@ const loadPageData = (fetchName, params, options, successCallback, failCallback,
   return fetchData(fetchName, params, options,function(data, pageLimit){
     if (pageLimit) {
       pageParams.hasNextPage = ((pageLimit[currentPageName]*pageLimit[pageLengthName]) < pageLimit[totalName]);
-      pageParams[currentPageName] = pageLimit[currentPageName] + 1;
+      pageParams[currentPageName] = pageLimit[currentPageName];
       pageParams[pageLengthName] = pageLimit[pageLengthName];
       pageParams[totalName] = pageLimit[totalName];
+
+      pageParams[pageNumName] = pageParams[currentPageName] + 1;
 
       successCallback && successCallback.call(this, data, pageParams);
     }
@@ -102,5 +104,10 @@ const loadPageData = (fetchName, params, options, successCallback, failCallback,
 export {
   getDefaultPagePrams,
   scrollLoad,
-  loadPageData
+  loadPageData,
+  pageNumName,
+  pageSizeName,
+  currentPageName,
+  pageLengthName,
+  totalName,
 }

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chess</title>
+
+    <style>
+        .demo{
+            width:600px;
+            margin:auto
+        }
+
+        .row{
+            height: 72px;
+        }
+
+        .row .panel{
+            display: inline-block;
+            width:70px;
+            height:70px;
+            border: 1px solid;
+            overflow: hidden;
+        }
+
+        .row .panel .panel-row{
+            width:72px;
+            height:72px;
+            overflow: hidden;
+            line-height: 6px;
+        }
+
+        .row .panel .panel-row .block{
+            width: 7px;
+            height: 7px;
+            background-color: #333333;
+            display: inline-block;
+            overflow: hidden;
+            margin: 1px
+        }
+
+        .row .panel .num{
+            word-break: break-all;
+        }
+
+    </style>
+
+    <script type="text/javascript" src="https://unpkg.com/vue@next"></script>
+</head>
+<body>
+    <div id="app" class="demo">
+        <div v-for="i in 8" class="row">
+            <div v-for="n in 8" class="panel">
+                <div v-if="(i-1)*8+(n-1) < 7 && nums[(i-1)*8+(n-1)]" class="panel-row">
+                    <div v-for="r in nums[(i-1)*8+(n-1)]" class="block"></div>
+                </div>
+                <div v-else class="num">
+                    {{nums[(i-1)*8+(n-1)]}}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript">
+    const app = Vue.createApp({
+        data() {
+            return {
+                count: 1,
+                message: "Hello Vue",
+                nums: [],
+                curr:0,
+                calInterval: null,
+                total: 64
+            }
+        },
+        created() {
+
+        },
+        mounted() {
+            this.play();
+        },
+        methods: {
+            play(){
+                const that = this;
+                this.calInterval=setInterval(function(){
+                    that.cal();
+                }, 1000);
+            },
+            replay(){
+                this.nums=[];
+                this.curr = 0;
+                this.play();
+            },
+            cal (){
+                let i = this.curr;
+                if(i==0){
+                    this.nums[i] = 1;
+                }else{
+                    this.nums[i] = this.nums[i-1] * 2;
+                }
+
+                //检查是否退出
+                this.checkCurr();
+            },
+            checkCurr (){
+                this.curr = this.curr + 1;
+                if(this.curr >= 64){
+                    clearInterval(this.calInterval);
+                    const that = this;
+                    setTimeout(function(){
+                        that.replay();
+                    },3000);//3秒后重复执行
+                }
+            }
+        }
+    });
+    app.mount('#app');
+
+</script>
+</html>

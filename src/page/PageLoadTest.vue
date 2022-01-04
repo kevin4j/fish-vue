@@ -23,11 +23,11 @@
             }
         },
         methods: {
-            loaded (res){
-                // console.log(JSON.stringify(res))
-                if(res){
-                    this.list.push(...res);
-                }
+            loaded (res, pageLimit){
+                console.log(JSON.stringify(pageLimit))
+                // if(res){
+                //     this.list.push(...res);
+                // }
             }
         }
     }

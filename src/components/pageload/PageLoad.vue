@@ -10,7 +10,13 @@
 </template>
 
 <script>
-    import {getDefaultPagePrams, loadPageData} from "../../utils/scrollLoad";
+    import {
+        currentPageName,
+        getDefaultPagePrams,
+        loadPageData,
+        pageNumName,
+        pageSizeName
+    } from "../../utils/scrollLoad";
     import {reactive, ref, toRefs, onMounted } from "vue";
     import {showToast} from "../../utils/commonTool";
 
@@ -30,7 +36,7 @@
         },
         setup(props){
             console.log(props);
-            let pageParams = reactive(getDefaultPagePrams({pageNum: props.pageNum, pageSize: props.pageSize}));
+            let pageParams = reactive(getDefaultPagePrams({[pageNumName]: props.pageNum, [pageSizeName]: props.pageSize}));
             let finished = ref(false);
             let loading = ref(false);
             let error = ref(false);
@@ -53,18 +59,22 @@
             const onRefresh = function(){
                 console.log("refresh")
                 list.value.splice(0,list.value.length);
-                pageParams=reactive(getDefaultPagePrams({pageNum: props.pageNum, pageSize: props.pageSize}));
+                pageParams=reactive(getDefaultPagePrams({[pageNumName]: props.pageNum, [pageSizeName]: props.pageSize}));
                 onLoad();
             }
 
             // 上拉加载更多数据
             const onLoad = function(){
                 console.log("load...")
+                console.log("当前分页:"+JSON.stringify(pageParams));
                 loadPageData(props.api, props.params || {}, props.options, function(res, pageLimit){
                     if(pageLimit){
                         finished.value = !pageLimit.hasNextPage;
                     }
                     loading.value=false;
+                    if(res){
+                        list.value.push(...res);
+                    }
                     props.loadedCallback && props.loadedCallback(res, pageLimit);
                 }, function(res){
                     loading.value=false;
