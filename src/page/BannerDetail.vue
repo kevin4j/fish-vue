@@ -26,11 +26,11 @@
 
 <script>
   import {getBannerList} from '../mock/api'
-  import {getDefaultPagePrams, loadPageData} from "../utils/scrollLoad"
+  import {getDefaultPagePrams, loadPageData, pageNumName, pageSizeName} from "../utils/scrollLoad"
   import {showConfirm} from "../utils/commonTool";
 
   export default {
-    name: 'Detail',
+    name: 'BannerDetail',
     data () {
       return {
         user: {},
@@ -39,7 +39,7 @@
         loading: false,
         finished: false,
         wrapperHeight: 0,
-        pageParams: getDefaultPagePrams({pageNum: 1, pageSize: 10}),
+        pageParams: getDefaultPagePrams({[pageNumName]: 1, [pageSizeName]: 20}),
       }
     },
     mounted () {
@@ -55,7 +55,7 @@
       onRefresh (){
         let that = this;
         that.list = [];
-        that.pageParams=getDefaultPagePrams({pageNum: 1, pageSize: 10});
+        that.pageParams=getDefaultPagePrams({[pageNumName]: 1, [pageSizeName]: 20});
         return that.onLoad();
       },
       onLoad (){

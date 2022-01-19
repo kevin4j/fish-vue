@@ -21,9 +21,10 @@
   import {getBannerList} from '../mock/api';
   import {getDownloadUrl} from '../utils/commonTool';
   import {fetchData} from "../mock/fetch";
+  import {pageNumName, pageSizeName} from "../utils/scrollLoad";
 
   export default {
-    name: 'List',
+    name: 'BannerList',
     props: {
       title: String
     },
@@ -43,7 +44,7 @@
     methods: {
       init () {
         let that=this;
-        return fetchData(getBannerList, {pageNum: 1, pageSize: 20}, {}, (data) => {
+        return fetchData(getBannerList, {[pageNumName]: 1, [pageSizeName]: 20}, {}, (data) => {
           data.forEach((d) => {
             d.imgUrl = getDownloadUrl(d.imgUrl)
           })
@@ -53,9 +54,9 @@
     },
     beforeRouteLeave (to, from, next) {
       if (to.path === '/detail') {
-        this.$store.commit('addCacheComponents', {name:'List', next: next});
+        this.$store.commit('addCacheComponents', {name:'BannerList', next: next});
       } else {
-        this.$store.commit('removeCacheComponents', {name:'List', next: next})
+        this.$store.commit('removeCacheComponents', {name:'BannerList', next: next})
       }
     }
   }

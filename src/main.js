@@ -11,6 +11,7 @@ import { Popup, Loading, List, PullRefresh, Uploader, Divider } from 'vant';
 import OnlineService from "./components/onlineservice/OnlineService";
 import LoadingOverlay from "./components/loading/LoadingOverlay";
 import PageLoad from "./components/pageload/PageLoad";
+import 'default-passive-events'; //解决chrome下的passive警告问题
 
 /* 响应式状态存储，用来缓存页面 */
 const store = new Vuex.Store({
@@ -68,7 +69,8 @@ if(isDebug()){
 }else{
     // 非开发环境强制在微信中使用
     if(!isWx()){
-        gotoWxGrant();
+        //如果是在公众号则开启授权校验
+        // gotoWxGrant();
     }
 }
 

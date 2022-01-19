@@ -34,7 +34,7 @@
       <van-divider :style="{ color: '#1989fa', borderColor: '#1989fa', padding: '0 16px' }">测试数据</van-divider>
       <ul class="category_list">
         <li v-for="msg in list" v-bind:key="msg.id">
-          <router-link :to="{name: 'List', params:{ title: msg.name}}">
+          <router-link :to="{name: 'BannerList', params:{ title: msg.name}}">
             <p class="find_goods_img" v-bind:style="{ lineHeight:imgHeight }"><img v-bind:src="msg.coverImgUrl" alt="" v-bind:style="{ height:imgHeight }"/></p>
             <p class="title">{{ msg.name}}</p>
           </router-link>

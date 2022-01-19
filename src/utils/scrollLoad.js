@@ -6,8 +6,8 @@
 import {fetchData} from '../mock/fetch'
 import {getWindowHeight, getScrollTop, getDocumentHeight} from "./window";
 
-const pageNumName="page"; //分页参数，第几页
-const pageSizeName="pageLength"; //分页参数，每页记录数
+const pageNumName="page"; //请求时分页参数，第几页
+const pageSizeName="pageLength"; //请求时分页参数，每页记录数
 const currentPageName="pageNum"; //分页返回，第几页
 const pageLengthName="pageSize"; //分页返回，每页记录数
 const totalName="total"; //分页返回，记录总数

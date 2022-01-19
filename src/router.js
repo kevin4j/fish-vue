@@ -1,8 +1,8 @@
 import {createRouter, createWebHashHistory } from 'vue-router'
 import HelloWorld from './components/HelloWorld'
 import Index from './page/Index'
-import List from './page/List'
-import Detail from './page/Detail'
+import BannerList from './page/BannerList'
+import BannerDetail from './page/BannerDetail'
 import UploadImage from './page/UploadImage'
 import PageLoadTest from "./page/PageLoadTest";
 import ScrollLoadTest from "./page/ScrollLoadTest";
@@ -26,8 +26,8 @@ const routes = [
     },
     {
         path: '/list/:title',
-        name: 'List',
-        component: List,
+        name: 'BannerList',
+        component: BannerList,
         meta: {
             title: '列表',
             keepAlive: true
@@ -36,8 +36,8 @@ const routes = [
     },
     {
         path: '/detail',
-        name: 'Detail',
-        component: Detail,
+        name: 'BannerDetail',
+        component: BannerDetail,
         meta: {
             title: '第三层'
         }

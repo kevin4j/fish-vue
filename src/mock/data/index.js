@@ -65,11 +65,15 @@ Mock.mock(/\/api\/banner?/, 'get', function (options) {
       'imgId': getRandomImgUrl()
     }))
   }
+  let result;
   if(params && params.withError && Random.boolean(8, 2, false)){
-    return renderErrorResult(400, "系统繁忙");
+    result = renderErrorResult(400, "系统繁忙");
   }else{
-    return renderResult(data, renderPageLimit(pageNum, pageSize))
+    result = renderResult(data, renderPageLimit(pageNum, pageSize))
   }
+
+  // console.log(JSON.stringify(result));
+  return result;
 })
 
 Mock.mock(/\/api\/uploadFile.do?/, 'post', function(options){

@@ -20,7 +20,7 @@
 
 <script>
   import {getBannerList} from '../mock/api';
-  import {scrollLoad} from '../utils/scrollLoad';
+  import {scrollLoad,pageNumName, pageSizeName} from '../utils/scrollLoad';
   import {getDownloadUrl, showAlert} from '../utils/commonTool';
 
   export default {
@@ -48,7 +48,7 @@
     methods: {
       init () {
         let that=this;
-        return scrollLoad(getBannerList, {pageNum: 1, pageSize: 5}, {}, (data) => {
+        return scrollLoad(getBannerList, {[pageNumName]: 1, [pageSizeName]: 5}, {}, (data) => {
           that.count += 1;
           data.forEach((d) => {
             d.imgUrl = getDownloadUrl(d.imgUrl)
